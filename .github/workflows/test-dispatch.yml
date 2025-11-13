@@ -1,0 +1,23 @@
+name: Test Dispatch
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dispatch test-target.yml
+        uses: ./.github/actions/sequential-dispatcher
+        with:
+          workflow_file: .github/workflows/test-target.yml
+          ref: main
+          wait: 'true'
+          label: Dispatch test target

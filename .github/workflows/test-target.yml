@@ -1,0 +1,15 @@
+name: Test Target Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say hello
+        run: echo "Hello from test target"
+      - name: Small wait
+        run: sleep 5
+      - name: Finish
+        run: echo "Target workflow completed"
