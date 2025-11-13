@@ -8,11 +8,11 @@ Dispatch another workflow and optionally wait for it to complete. Use this compo
 
 ## Usage
 
-Reference the composite action via the path in this repository:
+Reference the composite action as a standard action from this repository root (recommended):
 
 ```yaml
 - name: Dispatch workflow
-  uses: ./.github/actions/sequential-dispatcher
+  uses: KalanaRatnayake/sequential-dispatcher@v1
   with:
     workflow_file: .github/workflows/build.yml
     ref: main
@@ -22,11 +22,11 @@ Reference the composite action via the path in this repository:
     label: Build
 ```
 
-If you publish this repository and tag a release, others can consume it like:
+If you prefer path-based usage within the same repo:
 
 ```yaml
 - name: Dispatch workflow
-  uses: <owner>/<repo>/.github/actions/sequential-dispatcher@v1
+  uses: ./.github/actions/sequential-dispatcher
   with:
     workflow_file: .github/workflows/build.yml
     ref: main

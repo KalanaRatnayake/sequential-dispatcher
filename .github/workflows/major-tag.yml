@@ -1,0 +1,45 @@
+name: Update major tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  update-major:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Derive major tag from version
+        id: derive
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF}" =~ refs/tags/(v[0-9]+)\.[0-9]+\.[0-9]+ ]]; then
+            MAJOR_TAG="${BASH_REMATCH[1]}"
+          else
+            echo "Not a semver tag: ${GITHUB_REF}" >&2
+            exit 1
+          fi
+          echo "major=${MAJOR_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Move major tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          MAJOR="${{ steps.derive.outputs.major }}"
+          CURRENT_TAG="${GITHUB_REF#refs/tags/}"
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          # Update or create the major tag to point at current commit
+          git tag -fa "$MAJOR" -m "$MAJOR -> $CURRENT_TAG" "$CURRENT_TAG"
+          git push -f origin "$MAJOR"
